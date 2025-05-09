@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<robot name="my_quadracopter" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Materiales -->
+  <material name="gray"><color rgba="0.5 0.5 0.5 1.0"/></material>
+  <material name="black"><color rgba="0.0 0.0 0.0 1.0"/></material>
+  <material name="blue"><color rgba="0.0 0.0 1.0 1.0"/></material>
+
+  <!-- Cuerpo central -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.2 0.2 0.05"/></geometry>
+      <material name="gray"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.2 0.2 0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- Macro de brazo con motor -->
+  <xacro:macro name="arm_with_motor" params="name parent dx dy yaw">
+    <xacro:property name="arm_length" value="0.2"/>
+    <xacro:property name="ox" value="${dx * 0.5}"/>
+    <xacro:property name="oy" value="${dy * 0.5}"/>
+    <xacro:property name="mx" value="${dx * 0.5}"/> <!-- 🔵 desplazamiento respecto al centro del brazo -->
+    <xacro:property name="my" value="${dy * 0.5}"/>
+
+    <!-- Brazo -->
+    <link name="${name}_arm">
+      <visual>
+        <origin xyz="${ox} ${oy} 0" rpy="1.5708 0 ${yaw}"/>
+        <geometry>
+          <cylinder length="${arm_length}" radius="0.01"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+    </link>
+
+    <joint name="joint_${name}_arm" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_arm"/>
+      <origin xyz="${ox} ${oy} 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Motor -->
+    <link name="${name}_motor">
+      <visual>
+        <origin xyz="${mx} ${my} 0" rpy="0 0 0"/> <!-- 🔵 Motor colocado al final del brazo -->
+        <geometry>
+          <cylinder length="0.02" radius="0.02"/>
+        </geometry>
+        <material name="blue"/>
+      </visual>
+    </link>
+
+    <joint name="joint_${name}_motor" type="fixed">
+      <parent link="${name}_arm"/>
+      <child link="${name}_motor"/>
+      <origin xyz="${mx} ${my} 0" rpy="0 0 0"/> <!-- 🔵 Motor unido al extremo del brazo -->
+    </joint>
+  </xacro:macro>
+
+
+
+
+  <!-- Cuatro brazos con motores -->
+  <xacro:arm_with_motor name="front"  parent="base_link" dx="0" dy="0.2" yaw="0"/>
+  <xacro:arm_with_motor name="back"   parent="base_link" dx="0" dy="-0.2" yaw="0"/>
+  <xacro:arm_with_motor name="left"   parent="base_link" dx="-0.2" dy="0" yaw="1.5708"/>
+  <xacro:arm_with_motor name="right"  parent="base_link" dx="0.2" dy="0" yaw="1.5708"/>
+
+</robot>
