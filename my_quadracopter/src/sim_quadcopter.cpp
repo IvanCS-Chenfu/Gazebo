@@ -22,6 +22,8 @@ public:
         request->initial_pose.position.y = 0.0;
         request->initial_pose.position.z = 0.5;
 
+        std::cout << "[spawn_quadcopter_node] URDF enviado:\n" << request->xml << std::endl;
+
         auto result = client->async_send_request(request);
         if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) ==
             rclcpp::FutureReturnCode::SUCCESS) {
