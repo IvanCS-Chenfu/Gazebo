@@ -29,8 +29,8 @@
     <xacro:property name="arm_length" value="0.2"/>
     <xacro:property name="ox" value="${dx * 0.5}"/>
     <xacro:property name="oy" value="${dy * 0.5}"/>
-    <xacro:property name="mx" value="${dx * 0.5}"/> <!-- 🔵 desplazamiento respecto al centro del brazo -->
-    <xacro:property name="my" value="${dy * 0.5}"/>
+    <xacro:property name="mx" value="${dx}"/>        <!-- 🔵 desplazamiento respecto al centro del brazo -->
+    <xacro:property name="my" value="${dy}"/>
 
     <!-- Brazo -->
     <link name="${name}_arm">
@@ -41,6 +41,17 @@
         </geometry>
         <material name="black"/>
       </visual>
+      <collision>
+        <origin xyz="${ox} ${oy} 0" rpy="1.5708 0 ${yaw}"/>
+        <geometry>
+          <cylinder length="${arm_length}" radius="0.01"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.05"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="1e-5" iyy="1e-5" izz="1e-5" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
     </link>
 
     <joint name="joint_${name}_arm" type="fixed">
@@ -52,19 +63,32 @@
     <!-- Motor -->
     <link name="${name}_motor">
       <visual>
-        <origin xyz="${mx} ${my} 0" rpy="0 0 0"/> <!-- 🔵 Motor colocado al final del brazo -->
+        <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <cylinder length="0.02" radius="0.02"/>
         </geometry>
         <material name="blue"/>
       </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.02" radius="0.02"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.05"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="1e-5" iyy="1e-5" izz="1e-5" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
     </link>
 
-    <joint name="joint_${name}_motor" type="fixed">
+    <joint name="joint_${name}_motor" type="continuous">
       <parent link="${name}_arm"/>
       <child link="${name}_motor"/>
-      <origin xyz="${mx} ${my} 0" rpy="0 0 0"/> <!-- 🔵 Motor unido al extremo del brazo -->
+      <origin xyz="${mx} ${my} 0" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
     </joint>
+
   </xacro:macro>
 
 
@@ -76,4 +100,11 @@
   <xacro:arm_with_motor name="left"   parent="base_link" dx="-0.2" dy="0" yaw="1.5708"/>
   <xacro:arm_with_motor name="right"  parent="base_link" dx="0.2" dy="0" yaw="1.5708"/>
 
+
+  <gazebo>
+    <plugin name="quadcopter_plugin" filename="libquadcopter_plugin.so">
+      <ros_topic>/pwm_signals</ros_topic>
+    </plugin>
+  </gazebo>
+  
 </robot>
