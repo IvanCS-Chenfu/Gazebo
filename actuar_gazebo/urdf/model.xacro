@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<robot name="box_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+ <xacro:macro name="box_link" params="name length width height mass ixx iyy izz dx dy dz">
+    <link name="${name}">
+      <visual>
+        <origin xyz="${dx} ${dy} ${dz}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${length} ${width} ${height}"/>
+        </geometry>
+        <material name="blue">
+          <color rgba="0 0 1 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="${dx} ${dy} ${dz}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${length} ${width} ${height}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <origin xyz="${dx} ${dy} ${dz}" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+        <inertia ixx="${ixx}" ixy="0.0" ixz="0.0"
+                 iyy="${iyy}" iyz="0.0"
+                 izz="${izz}"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <!-- Base link -->
+  <xacro:box_link name="base_link"
+    length="0.2" width="0.2" height="1.0"
+    mass="2000.0" ixx="100" iyy="100" izz="100"
+    dx="0.0" dy="0.0" dz="0.0"/>
+
+  <!-- Joint 1 -->
+  <xacro:box_link name="link1" length="0.05" width="0.3" height="0.05" mass="0.1" ixx="0.01" iyy="0.01" izz="0.01" dx="0.0" dy="0.0" dz="0.025"/>
+  <!-- Mover el centro del hijo desde el joint -->
+  <joint name="joint1" type="revolute">
+    <parent link="base_link"/>
+    <child  link="link1"/>
+    <origin xyz="0 0.1 0.475" rpy="-1.57 0 0"/>   <!-- Distancias desde el centro del padre -->
+    <axis  xyz="0 0 1"/>          
+    <limit lower="-3.14" upper="3.14" effort="10.0" velocity="1.0"/>
+    <dynamics damping="0.01"/>
+  </joint>
+
+
+  <!-- Joint 2 -->
+  <xacro:box_link name="link2" length="0.05" width="0.3" height="0.05" mass="0.1" ixx="0.01" iyy="0.01" izz="0.01" dx="0.0" dy="0.0" dz="0.025"/>
+  <!-- Mover el centro del hijo desde el joint -->
+  <joint name="joint2" type="continuous">
+    <parent link="base_link"/>
+    <child  link="link2"/>
+    <origin xyz="0 -0.1 0.475" rpy="1.57 0 0"/>   <!-- Distancias desde el centro del padre -->
+    <axis  xyz="0 0 1"/>          
+    <dynamics damping="0.01"/>
+  </joint>
+
+
+  <!-- Joint 3 -->
+  <xacro:box_link name="link3" length="0.05" width="0.3" height="0.05" mass="0.1" ixx="0.01" iyy="0.01" izz="0.01" dx="0.0" dy="0.0" dz="0.0"/>
+  <!-- Mover el centro del hijo desde el joint -->
+  <joint name="joint3" type="prismatic">
+    <parent link="base_link"/>
+    <child  link="link3"/>
+    <origin xyz="0.125 0 0.0" rpy="0 0 0"/>   <!-- Distancias desde el centro del padre -->
+    <axis  xyz="0 0 1"/>
+    <limit lower="-0.475" upper="0.475" effort="50" velocity="0.1"/>          
+    <dynamics damping="0.01"/>
+  </joint>
+
+  <link name="led_link">
+    <visual name="led_visual">
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+      <material name="led_off">
+        <color rgba="0.0 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="led_joint" type="fixed">
+    <parent link="link2"/>
+    <child link="led_link"/>
+    <origin xyz="0 0 0.1" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="led_link">
+    <plugin name="led_color_plugin" filename="libled_color_plugin.so">
+      <led_link>led_link</led_link>
+    </plugin>
+  </gazebo>
+
+
+  <gazebo>
+    <plugin name="wrench_plugin" filename="libwrench_plugin.so">
+      <!-- Coincide con el nombre de tu link en el URDF -->
+      <link_name>link3</link_name>
+    </plugin>
+
+    <plugin name="multi_wrench" filename="libMultiWrenchPlugin.so"> <!-- MultiWrenchPlugin es la librería a poner en el CMake-->
+      <link_name1>link1</link_name1>
+      <topic1>/link1/apply_wrench</topic1>
+      <link_name2>link2</link_name2>
+      <topic2>/link2/apply_wrench</topic2>
+      <link_name3>link3</link_name3>
+      <topic3>/link3/apply_wrench</topic3>
+    </plugin>
+
+    <plugin name="joint_control" filename="libjoint_control_plugin.so">
+      <!-- Nombre exacto de la articulación URDF -->
+      <joint_name>joint3</joint_name>
+      <!-- Tópico para velocidad (Float64, en rad/s o m/s) -->
+      <topic_velocity>/joint1/cmd_vel</topic_velocity>
+      <!-- Tópico para esfuerzo (Float64, en Nm o N) -->
+      <topic_effort>/joint1/cmd_effort</topic_effort>
+      <!-- Opcional: límite de torque/force para el motor de velocidad -->
+      <max_effort>100.0</max_effort>
+    </plugin>
+    
+    <static>false</static>
+  </gazebo>
+
+
+
+</robot>
