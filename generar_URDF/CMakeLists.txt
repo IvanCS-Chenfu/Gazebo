@@ -17,6 +17,7 @@ find_package(ament_index_cpp REQUIRED)
 
 install(DIRECTORY
   urdf
+  launch
 
   DESTINATION share/${PROJECT_NAME}
 )
