@@ -74,7 +74,14 @@ class Clase_Cliente : public rclcpp::Node
 
             std::string xacro_path = ament_index_cpp::get_package_share_directory(nombre_paquete) + ruta_xacro;
 
-            std::string command = "xacro " + xacro_path;      // Ejecutamos el procesador xacro por terminal
+            // Añadimos argumentos al archvo .xacro
+            std::ostringstream args;
+            args << " px1:=" << 2
+                << " pz2:=" << 2
+                << " n_90_grad2:=" << 0.5;
+
+
+            std::string command = "xacro " + xacro_path + args.str();      // Ejecutamos el procesador xacro por terminal
             FILE* pipe = popen(command.c_str(), "r");         // Abrimos el comando como un stream
             if (!pipe)
             {

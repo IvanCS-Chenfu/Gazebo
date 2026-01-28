@@ -12,7 +12,12 @@ def generate_launch_description():
     pkg = get_package_share_directory('urdf_gazebo')
     xacro_file = os.path.join(pkg, 'urdf', 'macro_joints.xacro')
 
-    robot_description = Command(['xacro ', xacro_file])
+    robot_description = Command([
+                                    'xacro ', xacro_file,
+                                    ' px1:=', '2',
+                                    ' pz2:=', '2',
+                                    ' n_90_grad2:=', '0.5'
+                                ])
     
     
     return LaunchDescription([

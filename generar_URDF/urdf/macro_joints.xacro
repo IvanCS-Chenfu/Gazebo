@@ -2,12 +2,20 @@
 <robot name="box_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 
+<xacro:arg name="px1" default="1"/>
+<xacro:arg name="pz2" default="1"/>
+<xacro:arg name="n_90_grad2" default="1"/>
+
+
+
+
+<xacro:property name="n_90_grad2" value="$(arg n_90_grad2)"/> <!-- Se pasa a propiedad para poder hacer cálculos con ella -->
 <xacro:property name="angulo_recto" value="${pi/2}"/>
 
 
 
 
-<xacro:macro name="create_link" params="name xyz:=0 0 0 rpy:= 0 0 0">
+<xacro:macro name="create_link" params="name xyz:='0 0 0' rpy:= '0 0 0'">
   <link name="${name}">
     <visual>
       <origin xyz="${xyz}" rpy="${rpy}"/>
@@ -33,7 +41,7 @@
 </xacro:macro>
 
 
-<xacro:macro name="create_joint" params="name parent child xyz:= 0 0 0 rpy:= 0 0 0">
+<xacro:macro name="create_joint" params="name parent child xyz:= '0 0 0' rpy:= '0 0 0'">
   <joint name="${name}" type="fixed">
     <parent link="${parent}"/>
     <child link="${child}"/>
@@ -52,11 +60,11 @@
 
 <xacro:create_link name="base_link"/>
 
-<xacro:create_joint name="joint1" parent="base_link" child="link1" xyz="1 0 0"/>
+<xacro:create_joint name="joint1" parent="base_link" child="link1" xyz="$(arg px1) 0 0"/>
 
 <xacro:create_link name="link1"/>
 
-<xacro:create_joint name="joint2" parent="link1" child="link2" xyz="0 0 1" rpy="0 0 ${angulo_recto}"/>
+<xacro:create_joint name="joint2" parent="link1" child="link2" xyz="0 0 $(arg pz2)" rpy="0 0 ${angulo_recto*n_90_grad2}"/>
 
 <xacro:create_link name="link2"/>
 

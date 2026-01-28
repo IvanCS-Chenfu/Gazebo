@@ -37,8 +37,12 @@ endif()
 add_executable(sim_URDF src/sim_URDF.cpp)
 ament_target_dependencies(sim_URDF rclcpp gazebo_msgs ament_index_cpp)
 
+add_executable(sim_URDF_args src/sim_URDF_args.cpp)
+ament_target_dependencies(sim_URDF_args rclcpp gazebo_msgs ament_index_cpp)
+
 install(TARGETS
   sim_URDF
+  sim_URDF_args
   DESTINATION lib/${PROJECT_NAME}
 )
 
