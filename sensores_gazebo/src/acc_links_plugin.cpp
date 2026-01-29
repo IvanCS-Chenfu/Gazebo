@@ -114,11 +114,6 @@ private:
       // Tiempo para derivada (desde última publicación)
       const double dt = (sim_time - prev_time_).Double();
 
-      // Para pasar al header del mensaje
-      builtin_interfaces::msg::Time stamp;
-      stamp.sec = static_cast<int32_t>(sim_time.sec);
-      stamp.nanosec = static_cast<uint32_t>(sim_time.nsec);
-
       for (int i = 0; i < 3; ++i)
       {
         if (links_[i] && pubs_[i])
