@@ -36,14 +36,14 @@ if(BUILD_TESTING)
 endif()
 
 # fuerzas_links_plugin, velocidades_links_plugin, colores_links_plugin, fuerzas_joints_plugin, velocidades_joints_plugin
-add_library(velocidades_joints_plugin SHARED src/velocidades_joints_plugin.cpp)
-ament_target_dependencies(velocidades_joints_plugin gazebo_ros rclcpp geometry_msgs)
-target_include_directories(velocidades_joints_plugin PRIVATE include ${gazebo_ros_INCLUDE_DIRS})
-target_link_libraries(velocidades_joints_plugin ${gazebo_ros_LIBRARIES})
+add_library(fuerzas_links_plugin SHARED src/fuerzas_links_plugin.cpp)
+ament_target_dependencies(fuerzas_links_plugin gazebo_ros rclcpp geometry_msgs)
+target_include_directories(fuerzas_links_plugin PRIVATE include ${gazebo_ros_INCLUDE_DIRS})
+target_link_libraries(fuerzas_links_plugin ${gazebo_ros_LIBRARIES})
 
 
 install(TARGETS
-  velocidades_joints_plugin 
+  fuerzas_links_plugin 
 
   LIBRARY DESTINATION lib
 )

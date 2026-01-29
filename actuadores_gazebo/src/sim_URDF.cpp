@@ -70,7 +70,7 @@ class Clase_Cliente : public rclcpp::Node
         std::string read_xacro()
         {   
             std::string nombre_paquete = "fuerza_gazebo";         // Nombre del paquete
-            std::string ruta_xacro = "/urdf/model_joints.xacro";       // Path del .xacro
+            std::string ruta_xacro = "/urdf/model_links.xacro";       // Path del .xacro
 
             std::string xacro_path = ament_index_cpp::get_package_share_directory(nombre_paquete) + ruta_xacro;
 

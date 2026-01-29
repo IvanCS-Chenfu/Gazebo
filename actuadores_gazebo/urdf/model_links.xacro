@@ -89,7 +89,7 @@
   </joint>
 
   <gazebo> <!-- fuerzas_links_plugin, velocidades_links_plugin, colores_links_plugin  -->
-    <plugin name="colores_links_plugin" filename="libcolores_links_plugin.so">
+    <plugin name="fuerzas_links_plugin" filename="libfuerzas_links_plugin.so">
       <link_name1>link1</link_name1>    <!-- link_name1 es el texto que está escrito entre "" en el plugin-->
       <topic1>/mybot/link1</topic1>     <!-- topic1 es el texto que está escrito entre "" en el plugin-->
 
